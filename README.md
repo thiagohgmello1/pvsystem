@@ -5,5 +5,5 @@ pvsystem é um projeto de faculdade desenvolvido com o intuito de facilitar o pr
 ## Contribuições
 Contribuições são sempre bem-vindas, desde que pertinentes.
 
-## License
+## Licença
 Ainda não definida
