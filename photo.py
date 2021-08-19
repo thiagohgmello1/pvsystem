@@ -15,7 +15,7 @@ class Photo:
         self.img = cv2.imread(self.file_in)
         self.img_shape = self.img.shape[:2]
         self.shade_img, self.superior_lim = self._image_preprocessing1()
-        self.shading = self.cartesian_shading()
+        self.shading = self._cartesian_shading()
 
     def _image_preprocessing1(self) -> np.array:
         # Load image, convert to grayscale, Gaussian blur, Otsu's threshold
@@ -34,10 +34,11 @@ class Photo:
         # Morph processed_img and invert image
         kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
         processed_img = 255 - cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel, iterations=2)
-        cv2.imwrite(self.file_out, processed_img)
+        # cv2.imwrite(self.file_out, processed_img)
         fig, ax = plt.subplots()
         ax.imshow(processed_img, cmap='gray', vmin=0, vmax=255)
-        fig.show()
+        plt.savefig('outputs/photo/preprocessing1.png', dpi=80)
+        # fig.show()
         return self._image_preprocessing2(processed_img)
 
     def _image_preprocessing2(self, processed_img) -> (np.array, np.array):
@@ -56,11 +57,12 @@ class Photo:
                 count += 1
         fig, ax = plt.subplots()
         ax.imshow(shade_img.T, cmap='gray', vmin=0, vmax=255, origin='lower')
-        fig.show()
+        plt.savefig('outputs/photo/preprocessing2.png', dpi=80)
+        # fig.show()
         superior_lim -= pixels_y / 2
         return shade_img, superior_lim
 
-    def cartesian_shading(self) -> np.array:
+    def _cartesian_shading(self) -> np.array:
         aperture_x = self.camera.theta_x
         aperture_y = self.camera.theta_y
         pixels_y, pixels_x = self.img_shape
@@ -71,6 +73,7 @@ class Photo:
         fig, ax = plt.subplots()
         ax.plot(shading_x, shading_y)
         ax.set_ylim(0, None)
-        fig.show()
+        plt.savefig('outputs/photo/c_shading.png', dpi=80)
+        # fig.show()
         shading = np.concatenate((shading_x, shading_y), axis=1)
         return shading

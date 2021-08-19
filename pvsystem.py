@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-import datetime
 import matplotlib.pyplot as plt
 from pvlib import solarposition, irradiance
 from pvlib import location as loc
@@ -43,7 +42,8 @@ class PvSystem:
         ax.set_xlabel('Solar Azimuth (degrees)')
         ax.set_ylabel('Solar Elevation (degrees)')
         plt.ylim(0, None)
-        plt.show()
+        plt.savefig('outputs/pvsystem/c_chart_shading1.png', dpi=80)
+        # plt.show()
 
     def plot_cartesian_chart_with_shading2(self, freq):
         fig, ax = plt.subplots()
@@ -79,7 +79,8 @@ class PvSystem:
         ax.set_ylabel('Solar Elevation (degrees)')
         plt.ylim(0, None)
         plt.xlim(180, -180)
-        plt.show()
+        plt.savefig('outputs/pvsystem/c_chart_shading2.png', dpi=80)
+        # plt.show()
 
     def plot_polar_chart_with_shading(self, freq):
         ax = plt.subplot(1, 1, 1, projection='polar')
@@ -113,7 +114,8 @@ class PvSystem:
         ax.set_theta_zero_location('N')
         ax.set_theta_direction(-1)
         ax.set_rmax(90)
-        plt.show()
+        plt.savefig('outputs/pvsystem/p_chart_shading.png', dpi=80)
+        # plt.show()
 
     @staticmethod
     def get_irradiance1(irrad_path):
@@ -139,7 +141,9 @@ class PvSystem:
         df_norm_irrad.Irrad_med = df_norm_irrad.Irrad_med.apply(lambda x: x / max_irrad)
         fig, ax = plt.subplots()
         ax.plot(df_norm_irrad.Irrad_med)
-        plt.show()
+        plt.savefig('outputs/pvsystem/experimental_irrad.png', dpi=80)
+        # plt.show()
+
         return df_norm_irrad
 
     def get_irradiance2(self, tilt, surface_azimuth, freq, date):

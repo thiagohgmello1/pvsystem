@@ -6,6 +6,7 @@ from camera import Camera
 from shading import Shading
 from date import Date
 
+
 if __name__ == "__main__":
     camera = Camera(360, 62)
     # camera = Camera(46, 62)

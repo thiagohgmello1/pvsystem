@@ -14,7 +14,8 @@
 *.png
 *.svg
 *.ico
-*.jpeg
+
+*.pyc
 
 # OS generated files #
 ######################
