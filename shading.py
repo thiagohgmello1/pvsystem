@@ -12,6 +12,7 @@ class Shading:
         for photo in photos:
             shading = np.append(shading, self._circular_coord(photo.shading), axis=0)
         shading = shading[shading[:, 0].argsort()]
+        shading = np.delete(arr=shading, obj=0, axis=0)
         return shading
 
     @staticmethod
