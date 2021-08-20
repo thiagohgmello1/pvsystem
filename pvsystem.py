@@ -146,6 +146,14 @@ class PvSystem:
 
         return df_norm_irrad
 
+    def plot_shading_losses(self):
+        print('Aqui')
+        b = pd.DataFrame(self.shading)[0]
+        azimuth = self.solar_pos['azimuth'].apply(np.isclose, b=b, atol=0.05)
+        self.solar_pos['closest_shading'] = [self.shading[np.argwhere(serie == True)[0][0]][1] for serie in azimuth]
+        self.solar_pos['shading'] = np.where(self.solar_pos.apparent_elevation < self.solar_pos.closest_shading, 0,
+                                             self.solar_pos.apparent_elevation)
+
     def get_irradiance2(self, tilt, surface_azimuth, freq, date):
         times = pd.date_range(date, freq=freq, periods=6 * 24, tz=self.date.tz)
 

@@ -24,5 +24,6 @@ if __name__ == "__main__":
     # shading.plot_shading_visualization()
     pv = PvSystem(dates, location, shading)
     pv.plot_cartesian_chart_with_shading1('5min')
+    pv.plot_shading_losses()
     # pv.plot_cartesian_chart_with_shading2('5min')
     # pv.plot_polar_chart_with_shading('5min')
