@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from datetime import datetime
+from datetime import date as d
 from pvlib import solarposition, irradiance
 from pvlib import location as loc
 from location import Location
@@ -10,14 +11,21 @@ from date import Date
 
 
 class PvSystem:
-    def __init__(self, date: Date, location: Location, shading: Shading, irrad_path='data_base/data_base.xlsx'):
+    def __init__(self, date: Date, location: Location, shading: Shading, dates=None,
+                 irrad_path='data_base/data_base.xlsx'):
+        if dates is None:
+            dates = ['2021-08-21']
+
         self.date = date
         self.location = location
         self.solar_pos = location.solar_pos
         self.shading = shading.shading
         self.solar_pos = self._calculate_shading_influence(self.solar_pos)
         self.irradiation = self.get_irradiance1(irrad_path)
-        self.utilization_factor()
+        self.total_radiation = self.integral(y=self.irradiation.Irrad_med)
+        dates = None
+        self.df_utilization_factor = self.utilization_factor_calculator(dates=dates)
+        print('oi')
 
 
     def plot_cartesian_chart_with_shading1(self, freq):
@@ -199,7 +207,7 @@ class PvSystem:
         return df_solar_pos
 
 
-    def adjust_irradiance(self, df_solar_pos, plot=False):
+    def _adjust_day_irradiance(self, df_solar_pos, plot=False):
         num_points = self.irradiation.shape[0]
         start = pd.Timestamp(df_solar_pos.index[0].strftime('%m/%d/%Y, %H:%M:%S'))
         end = pd.Timestamp(df_solar_pos.index[-1].strftime('%m/%d/%Y, %H:%M:%S'))
@@ -216,10 +224,10 @@ class PvSystem:
         return sun_period
 
 
-    def utilization_factor(self, date='2021-08-20', freq='5min'):
+    def _day_irradiance_shading(self, date='2021-08-20', freq='5min'):
         df_solar_pos = self.generate_solar_position(date, freq)
         df_solar_pos = self._calculate_shading_influence(df_solar_pos)
-        df_sun_period = self.adjust_irradiance(df_solar_pos)
+        df_sun_period = self._adjust_day_irradiance(df_solar_pos)
         tol = pd.Timedelta(freq).total_seconds()
         b = pd.DataFrame([datetime.timestamp(idx) for idx in df_solar_pos.index])
         df_sun_period['time'] = df_sun_period['time'].apply(datetime.timestamp)
@@ -231,8 +239,22 @@ class PvSystem:
             y_axis_shading.append(1 if df_solar_pos['shading'][np.argwhere(t == True)[:, 0]].all() else 0)
 
         df_sun_period['y_axis_shading'] = df_sun_period['y_axis_shading'] * y_axis_shading
+        return df_sun_period
 
 
+    def utilization_factor_calculator(self, dates=None, freq='5min'):
+        if dates is None:
+            dates = pd.date_range(start=d(2021, 1, 1), end=d(2021, 12, 31)).to_pydatetime().tolist()
+        irradiance_shading = np.array([])
+        df_utilization_factor = pd.DataFrame(pd.to_datetime(dates).strftime('%m/%d/%Y'), columns=['day'])
+
+        for date in dates:
+            y = self._day_irradiance_shading(date, freq)
+            irradiance_shading = np.append(irradiance_shading, self.integral(y=y['y_axis_shading']))
+
+        irradiance_shading = irradiance_shading / self.total_radiation
+        df_utilization_factor['utilization_factor'] = irradiance_shading
+        return df_utilization_factor
 
 
     def generate_solar_position(self, date='2021-08-20', freq='5min'):
@@ -249,3 +271,8 @@ class PvSystem:
         solar_pos['azimuth'] = -solar_pos['azimuth']
         solar_pos['azimuth'].loc[solar_pos['azimuth'] <= -180] = solar_pos['azimuth'] + 360
         return solar_pos
+
+
+    @staticmethod
+    def integral(y, x=None):
+        return np.trapz(x=x, y=y)
