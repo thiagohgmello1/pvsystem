@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from datetime import datetime
 from pvlib import solarposition, irradiance
 from pvlib import location as loc
 from location import Location
@@ -191,7 +192,7 @@ class PvSystem:
         round_digit = round(d_azimuth, int(np.ceil(-np.log10(d_azimuth))))
         tol = round_digit + 10 ** (np.floor(np.log10(d_azimuth)))
 
-        azimuth = df_solar_pos['azimuth'].apply(np.isclose, b=b, atol=tol)
+        azimuth = df_solar_pos['azimuth'].apply(np.isclose, b=b, atol=tol, rtol=0)
         df_solar_pos['closest_shading'] = [self.shading[np.argwhere(serie == True)[0][0]][1] for serie in azimuth]
         df_solar_pos['shading'] = np.where(df_solar_pos.apparent_elevation < df_solar_pos.closest_shading, 0,
                                            df_solar_pos.apparent_elevation)
@@ -200,12 +201,12 @@ class PvSystem:
 
     def adjust_irradiance(self, df_solar_pos, plot=False):
         num_points = self.irradiation.shape[0]
-        start = pd.Timestamp(df_solar_pos.index[0].strftime('%X'))
-        end = pd.Timestamp(df_solar_pos.index[-1].strftime('%X'))
+        start = pd.Timestamp(df_solar_pos.index[0].strftime('%m/%d/%Y, %H:%M:%S'))
+        end = pd.Timestamp(df_solar_pos.index[-1].strftime('%m/%d/%Y, %H:%M:%S'))
         sun_period = pd.DataFrame()
         sun_period['time'] = pd.to_datetime(np.linspace(start=start.value, stop=end.value, num=num_points))
         sun_period['x_axis'] = pd.to_datetime(np.linspace(start=start.value, stop=end.value, num=num_points))\
-            .strftime("%H:%M:%S")
+            .strftime('%H:%M:%S')
         sun_period['y_axis'] = self.irradiation.Irrad_med
 
         if plot:
@@ -217,10 +218,21 @@ class PvSystem:
 
     def utilization_factor(self, date='2021-08-20', freq='5min'):
         df_solar_pos = self.generate_solar_position(date, freq)
+        df_solar_pos = self._calculate_shading_influence(df_solar_pos)
         df_sun_period = self.adjust_irradiance(df_solar_pos)
-        tol = pd.Timedelta(freq)
-        b = pd.DataFrame([pd.Timestamp(idx.strftime('%H:%M:%S')) for idx in df_solar_pos.index])
-        time = df_sun_period['x_axis'].apply(np.isclose, b=b, atol=tol)
+        tol = pd.Timedelta(freq).total_seconds()
+        b = pd.DataFrame([datetime.timestamp(idx) for idx in df_solar_pos.index])
+        df_sun_period['time'] = df_sun_period['time'].apply(datetime.timestamp)
+        time = df_sun_period['time'].apply(np.isclose, b=b, atol=tol, rtol=0)
+        df_sun_period['y_axis_shading'] = df_sun_period['y_axis']
+        y_axis_shading = []
+
+        for t in time:
+            y_axis_shading.append(1 if df_solar_pos['shading'][np.argwhere(t == True)[:, 0]].all() else 0)
+
+        df_sun_period['y_axis_shading'] = df_sun_period['y_axis_shading'] * y_axis_shading
+
+
 
 
     def generate_solar_position(self, date='2021-08-20', freq='5min'):
