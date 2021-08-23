@@ -1,10 +1,9 @@
-import matplotlib.pyplot as plt
-from pvsystem import PvSystem
-from location import Location
-from photo import Photo
-from camera import Camera
-from shading import Shading
-from date import Date
+from controllers.pvsystem import PvSystem
+from controllers.location import Location
+from controllers.photo import Photo
+from controllers.camera import Camera
+from controllers.shading import Shading
+from controllers.date import Date
 
 
 if __name__ == "__main__":

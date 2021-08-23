@@ -5,9 +5,9 @@ from datetime import datetime
 from datetime import date as d
 from pvlib import solarposition, irradiance
 from pvlib import location as loc
-from location import Location
+from controllers.location import Location
 from shading import Shading
-from date import Date
+from controllers.date import Date
 
 
 class PvSystem:
@@ -23,7 +23,7 @@ class PvSystem:
         self.solar_pos = self._calculate_shading_influence(self.solar_pos)
         self.irradiation = self.get_irradiance1(irrad_path)
         self.total_radiation = self.integral(y=self.irradiation.Irrad_med)
-        dates = None
+        # dates = None
         self.df_utilization_factor = self.utilization_factor_calculator(dates=dates)
         print('oi')
 
@@ -143,6 +143,7 @@ class PvSystem:
 
 
     # TODO Fix warning
+
     @staticmethod
     def get_irradiance1(irrad_path):
         df_irrad = pd.read_excel(irrad_path)

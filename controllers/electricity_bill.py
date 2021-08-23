@@ -32,6 +32,6 @@ class ElectricityBill:
 
 
 if __name__ == '__main__':
-    bill = ElectricityBill('bills/test_file.xlsx')
+    bill = ElectricityBill('../Bills/test_file.xlsx')
     bill.plot_monthly_consumption()
     bill.plot_daily_consumption()

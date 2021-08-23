@@ -17,8 +17,11 @@
 
 *.pyc
 
+# Directories
+venv/
+outputs/
+
 # OS generated files #
-######################
 .DS_Store
 .DS_Store?
 ._*

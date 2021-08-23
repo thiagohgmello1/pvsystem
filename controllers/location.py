@@ -1,5 +1,5 @@
 from pvlib import solarposition
-from date import Date
+from controllers.date import Date
 
 
 class Location:

@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from photo import Photo
+from controllers.photo import Photo
 
 
 class Shading:

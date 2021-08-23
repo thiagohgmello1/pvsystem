@@ -39,6 +39,6 @@ class Loads:
 
 
 if __name__ == '__main__':
-    loads = Loads('Bills/test_file.xlsx')
+    loads = Loads('../Bills/test_file.xlsx')
     loads.plot_load_curve(loads.df_ca_load_curve)
     loads.plot_load_curve(loads.df_cc_load_curve)
