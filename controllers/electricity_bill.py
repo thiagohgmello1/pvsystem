@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 
 class ElectricityBill:
-    def __init__(self, file, sheet='bill'):
+    def __init__(self, file='./Bills/test_file.xlsx', sheet='bill'):
         self.df_bill = pd.read_excel(file, sheet_name=sheet)
         self._daily_consumption_calculation()
 
@@ -32,6 +32,6 @@ class ElectricityBill:
 
 
 if __name__ == '__main__':
-    bill = ElectricityBill('../Bills/test_file.xlsx')
+    bill = ElectricityBill()
     bill.plot_monthly_consumption()
     bill.plot_daily_consumption()

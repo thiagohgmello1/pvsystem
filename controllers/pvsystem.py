@@ -15,7 +15,8 @@ class PvSystem:
                  irrad_path='data_bases/irradiation_curve.xlsx',
                  solarimetric_path='data_bases/solarimetric_database.xlsx'):
         if dates is None:
-            dates = ['2021-08-21', '2021-06-21', '2021-12-21']
+            dates = ['2021-01-21', '2021-02-21', '2021-03-21', '2021-04-21', '2021-05-21', '2021-06-21', '2021-07-21',
+                     '2021-08-21', '2021-09-21', '2021-10-21', '2021-11-21', '2021-12-21']
 
         self.date = date
         self.location = location
@@ -23,10 +24,10 @@ class PvSystem:
         self.shading = shading.shading
         self.solar_pos = self._calculate_shading_influence(self.solar_pos)
         self.irradiation = self.get_irradiance1(irrad_path)
-        self.df_solarimetric_data = self.read_solarimetric_data_base(solarimetric_path)
+        self.df_solarimetric_data = self._read_solarimetric_data_base(solarimetric_path)
         self.total_radiation = self.integral(y=self.irradiation.Irrad_med)
         self.df_utilization_factor = self.utilization_factor_calculator(dates=dates)
-        self.liquid_irradiation = self.calculate_liquid_irradiation_to_specific_dates(self.df_utilization_factor)
+        self.liquid_irradiation = self._calculate_liquid_irradiation_to_specific_dates(self.df_utilization_factor)
         print('oi')
 
 
@@ -249,7 +250,7 @@ class PvSystem:
         if dates is None:
             dates = pd.date_range(start=d(2021, 1, 1), end=d(2021, 12, 31)).to_pydatetime().tolist()
         irradiance_shading = np.array([])
-        df_utilization_factor = pd.DataFrame(pd.to_datetime(dates).strftime('%d/%m/%Y'), columns=['day'])
+        df_utilization_factor = pd.DataFrame(pd.to_datetime(dates).strftime('%Y-%m-%d'), columns=['day'])
 
         for date in dates:
             y = self._day_irradiance_shading(date, freq)
@@ -269,7 +270,7 @@ class PvSystem:
         return df_solar_pos
 
 
-    def search_mean_irradiation(self):
+    def _search_mean_irradiation(self):
         b_lon = self.location.lon
         b_lat = self.location.lat
         tol_lon = 0.05
@@ -280,11 +281,11 @@ class PvSystem:
         return self.df_solarimetric_data.iloc[index]
 
 
-    def calculate_liquid_irradiation_to_specific_dates(self, df_utilization_factor):
+    def _calculate_liquid_irradiation_to_specific_dates(self, df_utilization_factor):
         dates = df_utilization_factor.day
-        formatted_dates = [datetime.strptime(date, '%Y/%m/%d') for date in dates]
+        formatted_dates = [datetime.strptime(date, '%Y-%m-%d') for date in dates]
         months = [date.strftime('%b').lower() for date in formatted_dates]
-        mean_irradiation = self.search_mean_irradiation()
+        mean_irradiation = self._search_mean_irradiation()
         irrad = mean_irradiation[months].T
         liquid_irradiance = dict()
         for i in np.arange(0, df_utilization_factor.shape[0]):
@@ -294,7 +295,7 @@ class PvSystem:
 
 
     @staticmethod
-    def read_solarimetric_data_base(solarimetric_path):
+    def _read_solarimetric_data_base(solarimetric_path):
         df_solarimetric_path = pd.read_excel(solarimetric_path)
         return df_solarimetric_path
 

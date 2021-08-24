@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 
 class Loads:
-    def __init__(self, file):
+    def __init__(self, file='./Bills/test_file.xlsx', winter_coef=20):
         self.df_ca_loads = pd.read_excel(file, sheet_name='ca_loads', dtype={'hours_used': float, 'qty': np.int8})
         self.df_cc_loads = pd.read_excel(file, sheet_name='cc_loads', dtype={'hours_used': float, 'qty': np.int8})
         self.df_ca_load_period = pd.read_excel(file, sheet_name='ca_load_period')
@@ -39,6 +39,6 @@ class Loads:
 
 
 if __name__ == '__main__':
-    loads = Loads('../Bills/test_file.xlsx')
+    loads = Loads()
     loads.plot_load_curve(loads.df_ca_load_curve)
     loads.plot_load_curve(loads.df_cc_load_curve)
