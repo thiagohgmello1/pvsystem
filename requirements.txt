@@ -5,3 +5,4 @@ matplotlib~=3.4.2
 numpy~=1.21.1
 opencv-python~=4.5.3.56
 pvlib~=0.8.1
+openpyxl~=3.0.7
