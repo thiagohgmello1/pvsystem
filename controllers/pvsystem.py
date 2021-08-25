@@ -27,8 +27,7 @@ class PvSystem:
         self.df_solarimetric_data = self._read_solarimetric_data_base(solarimetric_path)
         self.total_radiation = self.integral(y=self.irradiation.Irrad_med)
         self.df_utilization_factor = self.utilization_factor_calculator(dates=dates)
-        self.liquid_irradiation = self._calculate_liquid_irradiation_to_specific_dates(self.df_utilization_factor)
-        print('oi')
+        self.df_liquid_irradiation = self._calculate_liquid_irradiation_to_specific_dates(self.df_utilization_factor)
 
 
     def plot_cartesian_chart_with_shading1(self, freq):
@@ -286,12 +285,14 @@ class PvSystem:
         formatted_dates = [datetime.strptime(date, '%Y-%m-%d') for date in dates]
         months = [date.strftime('%b').lower() for date in formatted_dates]
         mean_irradiation = self._search_mean_irradiation()
-        irrad = mean_irradiation[months].T
-        liquid_irradiance = dict()
-        for i in np.arange(0, df_utilization_factor.shape[0]):
-            liquid_irradiance[dates[i]] = (df_utilization_factor.utilization_factor.iloc[i] * irrad.iloc[i].values[0])
+        irrad = pd.DataFrame()
+        irrad['irrad'] = mean_irradiation[months].T
+        months = [datetime.strptime(month, "%b").month for month in months]
+        liquid_irradiance = pd.DataFrame(columns=['month', 'liquid_irrad'])
+        liquid_irradiance.month = months
+        liquid_irradiance.liquid_irrad = df_utilization_factor.utilization_factor.to_numpy() * irrad.to_numpy()[:, 0]
 
-        return pd.DataFrame.from_dict(liquid_irradiance, orient='index', columns=['liquid_irradiation'])
+        return liquid_irradiance
 
 
     @staticmethod

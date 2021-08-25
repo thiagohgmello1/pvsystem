@@ -4,13 +4,15 @@ import matplotlib.pyplot as plt
 
 
 class Loads:
-    def __init__(self, file='./Bills/test_file.xlsx', winter_coef=20):
+    def __init__(self, file='./Bills/test_file.xlsx', read_season='summer', adjust_coef=20):
         self.df_ca_loads = pd.read_excel(file, sheet_name='ca_loads', dtype={'hours_used': float, 'qty': np.int8})
         self.df_cc_loads = pd.read_excel(file, sheet_name='cc_loads', dtype={'hours_used': float, 'qty': np.int8})
         self.df_ca_load_period = pd.read_excel(file, sheet_name='ca_load_period')
         self.df_cc_load_period = pd.read_excel(file, sheet_name='cc_load_period')
         self.df_ca_load_curve = self._calculate_load_curve(self.df_ca_loads, self.df_ca_load_period)
         self.df_cc_load_curve = self._calculate_load_curve(self.df_cc_loads, self.df_cc_load_period)
+        self.read_season = read_season
+        self.adjust_coef = adjust_coef
 
     @staticmethod
     def _calculate_load_curve(df_load, df_period):

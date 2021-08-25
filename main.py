@@ -1,5 +1,6 @@
 from controllers.components import Components
 from controllers.electricity_bill import ElectricityBill
+from controllers.loads import Loads
 from controllers.pvsystem import PvSystem
 from controllers.location import Location
 from controllers.photo import Photo
@@ -28,5 +29,6 @@ if __name__ == "__main__":
     # pv.plot_shading_losses()
     # pv.plot_cartesian_chart_with_shading2('5min')
     # pv.plot_polar_chart_with_shading('5min')
+    loads = Loads()
     bill = ElectricityBill()
-    components = Components(pv, bill)
+    components = Components(pv, bill, loads=loads)
