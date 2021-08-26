@@ -67,7 +67,7 @@ class Photo:
         aperture_y = self.camera.theta_y
         pixels_y, pixels_x = self.img_shape
 
-        pixel2deg = aperture_y / (2 * pixels_y)
+        pixel2deg = aperture_y / pixels_y
         shading_y = self.superior_lim * pixel2deg + self.angular_elevation
         shading_x = np.linspace(-aperture_x/2, aperture_x/2, num=pixels_x).reshape((pixels_x, 1)) + self.photo_pos
         fig, ax = plt.subplots()

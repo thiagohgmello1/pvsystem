@@ -142,9 +142,8 @@ class PvSystem:
         fig, ax = plt.subplots()
         ax.scatter(df_solar_pos.azimuth, df_solar_pos.shading, s=2, c=df_solar_pos.index.dayofyear, label=None)
         ax.plot(self.shading[:, 0], self.shading[:, 1])
+        plt.ylim(0, None)
 
-
-    # TODO Fix warning
 
     @staticmethod
     def get_irradiance1(irrad_path):
@@ -204,9 +203,10 @@ class PvSystem:
         tol = round_digit + 10 ** (np.floor(np.log10(d_azimuth)))
 
         azimuth = df_solar_pos['azimuth'].apply(np.isclose, b=b, atol=tol, rtol=0)
-        df_solar_pos['closest_shading'] = [self.shading[np.argwhere(serie == True)[0][0]][1] for serie in azimuth]
-        df_solar_pos['shading'] = np.where(df_solar_pos.apparent_elevation < df_solar_pos.closest_shading, 0,
-                                           df_solar_pos.apparent_elevation)
+        df_solar_pos.loc[:, "closest_shading"] = \
+            [self.shading[np.argwhere(serie == True)[0][0]][1] for serie in azimuth]
+        df_solar_pos.loc[:, 'shading'] = np.where(df_solar_pos.apparent_elevation < df_solar_pos.closest_shading, 0,
+                                                  df_solar_pos.apparent_elevation)
         return df_solar_pos
 
 
