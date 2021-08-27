@@ -10,6 +10,9 @@ from controllers.shading import Shading
 from controllers.date import Date
 
 
+pd.options.mode.chained_assignment = None
+
+
 class PvSystem:
     def __init__(self, date: Date, location: Location, shading: Shading, dates=None,
                  irrad_path='data_bases/irradiation_curve.xlsx',

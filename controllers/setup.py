@@ -11,7 +11,7 @@ from controllers.loads import Loads
 
 
 class Setup:
-    def __init__(self, pvsystem: PvSystem, bill: ElectricityBill, loads: Loads,
+    def __init__(self, pvsystem: PvSystem, bill: ElectricityBill, loads: Loads, controller_type='mppt',
                  info_path='./Components/components.xlsx'):
         df_setup = pd.DataFrame(columns=['param', 'value'])
         df_inverter = pd.read_excel(info_path, sheet_name='inverter')
@@ -23,7 +23,7 @@ class Setup:
         self.df_load_desired = self._daily_active_energy_demand(bill, df_inverter, df_battery)
         df_setup = df_setup.append(self._calculate_minimum_needed_power(df_system, pvsystem), ignore_index=True)
 
-        self.panels = Panels(df_panels, df_system, df_setup, df_controller)
+        self.panels = Panels(df_panels, df_system, df_setup, df_controller, controller_type)
         self.controller = Controller(df_controller, self.panels)
         self.battery = Battery(df_battery, self.df_load_desired, df_system, pvsystem)
         self.inverter = Inverter(df_inverter)
