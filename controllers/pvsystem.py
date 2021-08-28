@@ -106,7 +106,8 @@ class PvSystem:
 
     def plot_polar_chart_with_shading(self, freq):
         ax = plt.subplot(1, 1, 1, projection='polar')
-        df_solar_pos = self._data_preprocessing(self.solar_pos)
+        # df_solar_pos = self._data_preprocessing(self.solar_pos)
+        df_solar_pos = self.solar_pos
 
         # Draw the analemma loops
         points = ax.scatter(np.radians(df_solar_pos.azimuth), df_solar_pos.apparent_zenith,
@@ -128,7 +129,7 @@ class PvSystem:
             df_solar_pos = solarposition.get_solarposition(times, self.location.lat, self.location.lon)
             df_solar_pos = df_solar_pos.loc[df_solar_pos['apparent_elevation'] > 0, :]
             label = date.strftime('%Y-%m-%d')
-            df_solar_pos = self._data_preprocessing(df_solar_pos)
+            # df_solar_pos = self._data_preprocessing(df_solar_pos)
             ax.plot(df_solar_pos.azimuth, df_solar_pos.apparent_zenith, label=label)
 
         ax.figure.legend(loc='upper left')
@@ -138,7 +139,7 @@ class PvSystem:
         ax.set_theta_direction(-1)
         ax.set_rmax(90)
         plt.savefig('outputs/pvsystem/p_chart_shading.png', dpi=80)
-        # plt.show()
+        plt.show()
 
 
     def _plot_cartesian_chart_shading_losses(self, df_solar_pos):
