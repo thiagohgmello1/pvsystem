@@ -107,12 +107,14 @@ class PvSystem:
     def plot_polar_chart_with_shading(self, freq):
         ax = plt.subplot(1, 1, 1, projection='polar')
         # df_solar_pos = self._data_preprocessing(self.solar_pos)
-        df_solar_pos = self.solar_pos
+        df_solar_pos = self.solar_pos.copy()
 
         # Draw the analemma loops
-        points = ax.scatter(np.radians(df_solar_pos.azimuth), df_solar_pos.apparent_zenith,
-                            s=2, label=None, c=df_solar_pos.index.dayofyear)
-        ax.figure.colorbar(points)
+        zenith_shading = (90 - df_solar_pos.closest_shading)
+        points1 = ax.scatter(np.radians(df_solar_pos.azimuth), df_solar_pos.apparent_zenith, s=2, label=None,
+                             c=df_solar_pos.index.dayofyear)
+        ax.scatter(np.radians(df_solar_pos.azimuth), zenith_shading, s=2, label=None, c=np.ones(zenith_shading.shape[0]))
+        ax.figure.colorbar(points1)
 
         # Draw hour labels
         for hour in np.unique(df_solar_pos.index.hour):
@@ -122,15 +124,15 @@ class PvSystem:
             pos = df_solar_pos.loc[r.idxmin(), :]
             ax.text(np.radians(pos['azimuth']), pos['apparent_zenith'], str(hour))
 
-        # Draw individual days
-        for date in self.date.specific_dates:
-            time_delta = pd.Timedelta('24h')
-            times = pd.date_range(date, date + time_delta, freq=freq, tz=self.date.tz)
-            df_solar_pos = solarposition.get_solarposition(times, self.location.lat, self.location.lon)
-            df_solar_pos = df_solar_pos.loc[df_solar_pos['apparent_elevation'] > 0, :]
-            label = date.strftime('%Y-%m-%d')
-            # df_solar_pos = self._data_preprocessing(df_solar_pos)
-            ax.plot(df_solar_pos.azimuth, df_solar_pos.apparent_zenith, label=label)
+        # # Draw individual days
+        # for date in self.date.specific_dates:
+        #     time_delta = pd.Timedelta('24h')
+        #     times = pd.date_range(date, date + time_delta, freq=freq, tz=self.date.tz)
+        #     df_solar_pos = solarposition.get_solarposition(times, self.location.lat, self.location.lon)
+        #     df_solar_pos = df_solar_pos.loc[df_solar_pos['apparent_elevation'] > 0, :]
+        #     label = date.strftime('%Y-%m-%d')
+        #     # df_solar_pos = self._data_preprocessing(df_solar_pos)
+        #     ax.plot(df_solar_pos.azimuth, df_solar_pos.apparent_zenith, label=label)
 
         ax.figure.legend(loc='upper left')
 
@@ -227,6 +229,7 @@ class PvSystem:
         if plot:
             sun_period.plot(x='x_axis', y='y_axis', xlabel='Time', ylabel='Irradiance (pu)', legend=False)
             plt.gcf().autofmt_xdate()
+            plt.savefig('./outputs/teste/test.png', dpi=80)
 
         return sun_period
 

@@ -53,6 +53,7 @@ if __name__ == "__main__":
     t0 = time.perf_counter()
     pv = PvSystem(dates, location, shading)
     pv.plot_cartesian_chart_with_shading1('5min')
+    pv.plot_polar_chart_with_shading('5min')
     t1 = time.perf_counter() - t0
     print(f't_pvsystem = {t1}')
 
