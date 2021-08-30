@@ -1,4 +1,4 @@
-from controllers.setup import Setup
+from controllers.offgridsetup import OffGridSetup
 from controllers.electricity_bill import ElectricityBill
 from controllers.loads import Loads
 from controllers.pvsystem import PvSystem
@@ -68,7 +68,7 @@ if __name__ == "__main__":
     print(f't_electricityBill = {t1}')
 
     t0 = time.perf_counter()
-    setup = Setup(pv, bill, loads=loads)
+    setup = OffGridSetup(pv, bill, loads=loads)
     t1 = time.perf_counter() - t0
     print(f't_setup = {t1}')
 

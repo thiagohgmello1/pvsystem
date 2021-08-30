@@ -10,9 +10,9 @@ from controllers.electricity_bill import ElectricityBill
 from controllers.loads import Loads
 
 
-class Setup:
+class OffGridSetup:
     def __init__(self, pvsystem: PvSystem, bill: ElectricityBill, loads: Loads, controller_type='mppt',
-                 info_path='./Components/components.xlsx'):
+                 info_path='./Components/components_offgrid.xlsx'):
         self.df_setup = pd.DataFrame(columns=['param', 'value'])
         df_inverter = pd.read_excel(info_path, sheet_name='inverter')
         df_panels = pd.read_excel(info_path, sheet_name='panels')

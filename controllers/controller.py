@@ -45,7 +45,7 @@ class Controller:
 
 
     def _check_voltage(self, panels: Panels):
-        v_oc_tmin = panels.voc_temp()[0]
+        v_oc_tmin = panels.v_pmax_temp()[0]
         series = np.array(panels.df_panels_setup.loc[panels.df_panels_setup['param'] == 'series'].value.values[0])
         v_modules = v_oc_tmin * series
         v_max = self.df_controller.loc[self.df_controller['param'] == 'v_max'].value.values[0]
