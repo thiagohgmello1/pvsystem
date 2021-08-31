@@ -57,8 +57,8 @@ class PvSystem:
             ax.plot(df_solar_pos.azimuth, df_solar_pos.apparent_elevation, label=label)
 
         ax.figure.legend(loc='upper left')
-        ax.set_xlabel('Solar Azimuth (degrees)')
-        ax.set_ylabel('Solar Elevation (degrees)')
+        ax.set_xlabel('Azimute solar (°)')
+        ax.set_ylabel('Elevação solar (°)')
         plt.ylim(0, None)
         plt.savefig('outputs/pvsystem/c_chart_shading1.png', dpi=80)
         # plt.show()
@@ -96,8 +96,8 @@ class PvSystem:
             ax.plot(df_solar_pos.azimuth, df_solar_pos.apparent_elevation, label=label)
 
         ax.figure.legend(loc='upper left')
-        ax.set_xlabel('Solar Azimuth (degrees)')
-        ax.set_ylabel('Solar Elevation (degrees)')
+        ax.set_xlabel('Azimute solar (°)')
+        ax.set_ylabel('Elevação solar (°)')
         plt.ylim(0, None)
         plt.xlim(180, -180)
         plt.savefig('outputs/pvsystem/c_chart_shading2.png', dpi=80)
@@ -253,6 +253,9 @@ class PvSystem:
             y_axis_shading.append(1 if df_solar_pos['shading'][np.argwhere(t == True)[:, 0]].all() else 0)
 
         df_sun_period['y_axis_shading'] = df_sun_period['y_axis_shading'] * y_axis_shading
+        # if date == '2021-03-21':
+        #     df_sun_period.plot('x_axis', 'y_axis_shading', legend=False, xlabel='Hora')
+        #     plt.locator_params(axis='x', nbins=6)
         return df_sun_period
 
 

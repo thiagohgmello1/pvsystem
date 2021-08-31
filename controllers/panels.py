@@ -65,7 +65,7 @@ class Panels:
 
     def _parallel_mppt_off(self, df_setup):
         p_min = df_setup.loc[df_setup['param'] == 'p_min'].value.values[0] * 1000
-        serie_mppt_min, serie_mppt_max = self.df_panels_setup.loc[self.df_panels_setup['param'] == 'series'].\
+        serie_mppt_min, serie_mppt_max = self.df_panels_setup.loc[self.df_panels_setup['param'] == 'series_off'].\
             value.values[0]
         p_mod = self.df_panels.loc[self.df_panels['param'] == 'p_max'].value.values[0]
         parallel_modules_min = np.ceil(p_min / (serie_mppt_max * p_mod))
@@ -87,7 +87,7 @@ class Panels:
     def _paralel_on(self, df_inverter):
         i_sc = self.df_panels.loc[self.df_panels['param'] == 'i_sc'].value.values[0]
         ii_max = df_inverter.loc[df_inverter['param'] == 'ii_max'].value.values[0]
-        parallel_qty_dict = {'param': 'parallel_off', 'value': np.floor(i_sc / ii_max)}
+        parallel_qty_dict = {'param': 'parallel_on', 'value': np.floor(i_sc / ii_max)}
         self.df_panels_setup = self.df_panels_setup.append(parallel_qty_dict, ignore_index=True)
 
 
